@@ -14,6 +14,7 @@ import {
   Monitor,
   Phone,
   Plug,
+  Settings,
   Shield,
   ShoppingBag,
   ShoppingCart,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import AdminPage from "./AdminPage";
 import type { Product } from "./backend.d";
 import {
   useAddToCart,
@@ -316,7 +318,7 @@ function HeroSection() {
         {/* CTA Buttons */}
         <div className="reveal reveal-delay-3 flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="tel:+1234567890"
+            href="tel:+917028939891"
             data-ocid="hero.primary_button"
             className="btn-neon-cyan flex items-center gap-2 px-6 py-3 rounded-xl text-sm transition-all duration-200"
           >
@@ -324,7 +326,7 @@ function HeroSection() {
             Call Now
           </a>
           <a
-            href="https://wa.me/1234567890"
+            href="https://wa.me/917028939891"
             data-ocid="hero.secondary_button"
             target="_blank"
             rel="noopener noreferrer"
@@ -491,7 +493,7 @@ function ProductCard({
         <h3 className="font-display font-bold text-foreground mb-1">
           {product.name}
         </h3>
-        <p className="text-primary font-black text-xl mb-3">${price}</p>
+        <p className="text-primary font-black text-xl mb-3">₹{price}</p>
         <button
           type="button"
           data-ocid={`accessories.button.${index + 1}`}
@@ -564,6 +566,16 @@ function AccessoriesSection({ onCartOpen }: { onCartOpen: () => void }) {
             Top-quality accessories for every smartphone. Competitive prices and
             genuine products.
           </p>
+          <div className="reveal reveal-delay-3 mt-6">
+            <a
+              href="#accessories"
+              data-ocid="accessories.primary_button"
+              className="btn-neon-purple inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold transition-all duration-200"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Shop Now
+            </a>
+          </div>
         </div>
 
         {/* Loading state */}
@@ -762,21 +774,21 @@ function ContactFooter() {
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary flex-shrink-0" />
                 <a
-                  href="tel:+1234567890"
+                  href="tel:+917028939891"
                   className="hover:text-primary transition-colors"
                 >
-                  +1 (234) 567-890
+                  +91 70289 39891
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-primary flex-shrink-0" />
                 <a
-                  href="https://wa.me/1234567890"
+                  href="https://wa.me/917028939891"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary transition-colors"
                 >
-                  WhatsApp: +1 (234) 567-890
+                  WhatsApp: +91 70289 39891
                 </a>
               </div>
               <div className="flex items-start gap-2">
@@ -820,7 +832,18 @@ function ContactFooter() {
 
         {/* Copyright */}
         <div className="border-t border-border/20 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-foreground/40">
-          <span>© {year} Mobile Repair Wala. All rights reserved.</span>
+          <div className="flex items-center gap-4">
+            <span>© {year} Mobile Repair Wala. All rights reserved.</span>
+            <a
+              href="#/admin"
+              data-ocid="footer.admin.link"
+              className="flex items-center gap-1 hover:text-foreground/60 transition-colors"
+              aria-label="Admin panel"
+            >
+              <Settings className="w-3 h-3" />
+              Admin
+            </a>
+          </div>
           <a
             href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(hostname)}`}
             target="_blank"
@@ -965,7 +988,7 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
                       {item.name}
                     </p>
                     <p className="text-primary font-bold text-sm">
-                      ${(Number(item.price) / 100).toFixed(2)}
+                      ₹{(Number(item.price) / 100).toFixed(2)}
                     </p>
                   </div>
                   <button
@@ -989,7 +1012,7 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
             <div className="flex items-center justify-between text-sm">
               <span className="text-foreground/60 font-medium">Total</span>
               <span className="text-primary font-black text-lg">
-                ${total.toFixed(2)}
+                ₹{total.toFixed(2)}
               </span>
             </div>
             <button
@@ -1016,22 +1039,14 @@ function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   );
 }
 
-/* ─── App Root ───────────────────────────────────────────── */
-export default function App() {
+/* ─── Main Website ───────────────────────────────────────── */
+function MainWebsite() {
   const [cartOpen, setCartOpen] = useState(false);
   const { data: cartItems } = useGetCartContents();
   const cartCount = cartItems?.length ?? 0;
 
-  // Update document title
-  useEffect(() => {
-    document.title =
-      "Mobile Repair Wala – Professional Mobile Repair & Accessories";
-  }, []);
-
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Toaster position="bottom-right" theme="dark" />
-
       <Navbar onCartOpen={() => setCartOpen(true)} cartCount={cartCount} />
 
       <main>
@@ -1045,5 +1060,33 @@ export default function App() {
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
+  );
+}
+
+/* ─── App Root ───────────────────────────────────────────── */
+export default function App() {
+  const [hash, setHash] = useState(() => window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  // Update document title
+  useEffect(() => {
+    if (hash === "#/admin") {
+      document.title = "Admin Panel – Mobile Repair Wala";
+    } else {
+      document.title =
+        "Mobile Repair Wala – Professional Mobile Repair & Accessories";
+    }
+  }, [hash]);
+
+  return (
+    <>
+      <Toaster position="bottom-right" theme="dark" />
+      {hash === "#/admin" ? <AdminPage /> : <MainWebsite />}
+    </>
   );
 }

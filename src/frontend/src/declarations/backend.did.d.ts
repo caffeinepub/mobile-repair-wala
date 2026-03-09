@@ -11,18 +11,36 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface Product {
-  'id' : string,
+  'id' : ProductId,
   'name' : string,
   'imageUrl' : string,
   'category' : string,
   'price' : bigint,
 }
+export type ProductId = string;
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface _SERVICE {
-  'addToCart' : ActorMethod<[string], undefined>,
-  'clearCart' : ActorMethod<[], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addProduct' : ActorMethod<[string, string, bigint, string], string>,
+  'addToCart' : ActorMethod<[ProductId], boolean>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'clearCart' : ActorMethod<[], boolean>,
+  'deleteProduct' : ActorMethod<[ProductId], boolean>,
   'getAllProducts' : ActorMethod<[], Array<Product>>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCartContents' : ActorMethod<[], Array<Product>>,
-  'removeFromCart' : ActorMethod<[string], undefined>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'removeFromCart' : ActorMethod<[ProductId], boolean>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'updateProduct' : ActorMethod<
+    [ProductId, string, string, bigint, string],
+    boolean
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
